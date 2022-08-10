@@ -1,12 +1,18 @@
 package com.study.security_kyunghan.service.auth;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.List;
+import org.springframework.security.authorization.AuthorityAuthorizationDecision;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.study.security_kyunghan.domain.user.User;
 
+import lombok.Data;
+
+
+@Data
 public class PrincipalDetails implements UserDetails{
 	private static final long serialVersionUID = 1L;
 	
@@ -15,10 +21,30 @@ public class PrincipalDetails implements UserDetails{
 	public PrincipalDetails(User user) {
 		this.user = user;
 	}
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		user.getUserRoles();
-		return null;
+		Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+		
+//		List<String> roleList = user.getUserRoles();
+		
+//		for(String role : roleList) {
+//			GrantedAuthority authority = new GrantedAuthority() {
+//				
+//				@Override
+//				public String getAuthority() {
+//					return role;
+//				}
+//			};
+//			
+//			grantedAuthorities.add(authority);
+//		}
+		
+		user.getUserRoles().forEach(role -> {
+			grantedAuthorities.add(() -> role);
+		});
+		
+		return grantedAuthorities;
 	}
 
 	@Override
