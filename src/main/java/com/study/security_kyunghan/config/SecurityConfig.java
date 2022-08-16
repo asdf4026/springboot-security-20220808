@@ -8,10 +8,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.study.security_kyunghan.config.auth.AuthFailuerHandler;
+import com.study.security_kyunghan.service.auth.PrincipalOauth2UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity //기존의 WebSecurityConfigurerAdapter를 비활성 시키고 현재 시큐리티 설정을 따르겠다.
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
+	
+	private final PrincipalOauth2UserService principalOauth2UserService;
 	
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
@@ -44,6 +50,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.loginPage("/auth/signin")  //로그인 페이지는 해당 get요청을 통해 접근한다.
 			.loginProcessingUrl("/auth/signin")
 			.failureHandler(new AuthFailuerHandler())
-			.defaultSuccessUrl("/");
+			
+			.and()
+			
+			.oauth2Login()
+			.userInfoEndpoint()
+			.userService(principalOauth2UserService)
+
+			.and()
+			
+			.defaultSuccessUrl("/index");
 	}
 }

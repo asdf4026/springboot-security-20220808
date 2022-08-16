@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.study.security_kyunghan.handler.aop.annotation.Log;
 import com.study.security_kyunghan.handler.aop.annotation.Timer;
-import com.study.security_kyunghan.handler.aop.annotation.ValidCheck2;
-import com.study.security_kyunghan.handler.exception.CustomValidationApiExcetion;
+import com.study.security_kyunghan.handler.aop.annotation.ValidCheck;
 import com.study.security_kyunghan.service.auth.AuthService;
 import com.study.security_kyunghan.service.auth.PrincipalDetailsService;
 import com.study.security_kyunghan.web.dto.CMRespDto;
@@ -36,7 +35,7 @@ public class AuthController {
 	
 	@Timer
 	@Log
-	@ValidCheck2
+	@ValidCheck
 	@GetMapping("/signup/validation/username")
 	public ResponseEntity<?> checkUsername(@Valid UsernameCheckReqDto usernameCheckReqDto, BindingResult bindingResult) {
 		
@@ -52,7 +51,7 @@ public class AuthController {
 		return ResponseEntity.ok(new CMRespDto<>(1, "회원가입 가능여부", status));
 	}
 	
-	@ValidCheck2
+	@ValidCheck
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody @Valid SignupReqDto signupReqDto, BindingResult bindingResult) {
 		boolean status = false;
