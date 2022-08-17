@@ -23,12 +23,29 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 	
 	private final UserRepository userRepository;
 	
+	
+	/*
+	 * OAuth2User의 정보를 우리 서버 database에 등록
+	 */
 	@Override
 		public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 			String provider = null;
-		
+			
+			/*
+			 * super.loadUser(userRequest)
+			 * 엔드포인트 결과 즉, OAuth2User 정보를 가진 객체를 리턴
+			 */
 			OAuth2User oAuth2User = super.loadUser(userRequest);
+			
+			/*
+			 * Provider 정보(클라이언트 아이디, 클라이언트 시크릿, 클라이언트 네임)
+			 */
+			
 			ClientRegistration clientRegistration = userRequest.getClientRegistration();
+			
+			/*
+			 * 실제 프로필 정보(Map)
+			 */
 			Map<String, Object> attributes = oAuth2User.getAttributes();
 			log.error(">>>>> ClientRegistrtion: {}", clientRegistration);
 			log.error(">>>>> oAuth2User: {}", attributes);
@@ -41,9 +58,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 		}	
 	
 	private User getOAuth2User(String provider, Map<String, Object> attributes) throws OAuth2AuthenticationException {
-		User user = null;
 		String oauth2_id = null;
 		String id = null;
+		
+		User user = null;
+		
 		Map<String, Object> response = null;
 		
 		if(provider.equalsIgnoreCase("google")) {
@@ -51,11 +70,12 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 			id = (String)response.get("sub");
 			
 		}else if (provider.equalsIgnoreCase("naver")) {
-			response = (Map<String, Object> )attributes.get("response");
+			response = (Map<String, Object>) attributes.get("response");
 			id = (String)response.get("id");
 		}else {
 			throw new OAuth2AuthenticationException("provider Error!");
 		}
+		//위에서 가져온 정보로 아이디생성
 		oauth2_id = provider + "_" + id;
 
 		try {
@@ -75,6 +95,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 					.user_roles("ROLE_USER")
 					.user_provider(provider)
 					.build();
+			
 			try {
 				userRepository.save(user);
 				user = userRepository.findOAuth2UserByUsername(oauth2_id);

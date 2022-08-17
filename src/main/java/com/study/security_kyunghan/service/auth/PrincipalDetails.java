@@ -22,9 +22,13 @@ public class PrincipalDetails implements UserDetails , OAuth2User{
 	private User user;
 	private Map<String, Object> attribute;
 	
+	
+	//일반로그인
 	public PrincipalDetails(User user) {
 		this.user = user;
 	}
+	
+	//OAuth2 로그인
 	public PrincipalDetails(User user, Map<String, Object> attribute) {
 		this.user = user;
 		this.attribute = attribute;
