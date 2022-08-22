@@ -67,6 +67,8 @@ public class AuthController {
 		
 		return ResponseEntity.ok(new CMRespDto<>(1, "회원가입 성공", status));
 	}
+	
+	
 	@GetMapping("/principal")
 	public ResponseEntity<?> getPrincipal(@AuthenticationPrincipal PrincipalDetails principalDetails){
 		if(principalDetails == null) {
