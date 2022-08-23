@@ -1,8 +1,5 @@
 package com.study.security_kyunghan.web.dto.notice;
 
-
-
-
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;

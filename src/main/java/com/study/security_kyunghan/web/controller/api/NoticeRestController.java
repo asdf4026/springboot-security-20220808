@@ -2,12 +2,15 @@ package com.study.security_kyunghan.web.controller.api;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.study.security_kyunghan.service.notice.NoticeService;
+import com.study.security_kyunghan.web.dto.CMRespDto;
 import com.study.security_kyunghan.web.dto.notice.AddNoticeReqDto;
-import com.study.security_kyunghan.web.dto.notice.NoticeService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +27,20 @@ public class NoticeRestController {
 	public ResponseEntity<?> addNotice(AddNoticeReqDto addNoticeReqDto){
 		log.info(">>>>{}", addNoticeReqDto);
 		log.info(">>>>>> fileName: {}", addNoticeReqDto.getFile().get(0).getOriginalFilename());
+		
+		int noticeCode = 0;
+		
 		try {
-			noticeService.addNotice(addNoticeReqDto);
+			noticeCode = noticeService.addNotice(addNoticeReqDto);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return ResponseEntity.internalServerError().body(new CMRespDto<>(-1, "Failed to write", noticeCode));
 		}
+		return ResponseEntity.ok(new CMRespDto<>(1, "completing cretion", noticeCode));
+	}
+	
+	@GetMapping("/{noticeCode}")
+	public ResponseEntity<?> getNotice(@PathVariable int noticeCode) {
 		return null;
 	}
 }
